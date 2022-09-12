@@ -41,22 +41,13 @@ export class AppWithRouter {
 
    private currentComponentInstance: SvelteComponent | undefined;
 
-   constructor(private readonly options: Options) {
-      this.processRoutes(this.options.routes);
-   }
+   constructor(private readonly options: Options) {}
 
    public start() {
+      this.processRoutes(this.options.routes);
+
       let url = new URL(window.location.href);
-
-      if (url.pathname === "/index.html") {
-         globalThis.location.href = "/";
-         return;
-      }
-
-      // remove trailing slash
-      if (url.pathname.endsWith("/")) {
-         url.pathname = url.pathname.slice(0, -1);
-      }
+      if (url.pathname.endsWith("/")) url.pathname = url.pathname.slice(0, -1);
 
       this.renderPage(url);
 
@@ -72,11 +63,11 @@ export class AppWithRouter {
          guards: Route["guards"];
       }> = [];
 
-      function visitor(base: string, components: Route["component"][], routes: Route[], guards: RouteGuard[]) {
+      function v(base: string, components: Route["component"][], routes: Route[], guards: RouteGuard[]) {
          for (let r of routes) {
             let nextPathname = base + r.pathname;
             if (r.children) {
-               visitor(nextPathname, components.concat(r.component), r.children, guards.concat(r.guards));
+               v(nextPathname, components.concat(r.component), r.children, guards.concat(r.guards));
             } else {
                arr.push({
                   pattern: {
@@ -94,7 +85,7 @@ export class AppWithRouter {
          }
       }
 
-      visitor("", [], rawRoutes, []);
+      v("", [], rawRoutes, []);
 
       this.processedRoutes = arr;
       this.options.routes = null;
