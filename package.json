@@ -1,6 +1,6 @@
 {
    "name": "alioli",
-   "private": true,
+   "private": false,
    "version": "0.0.0",
    "type": "module",
    "files": [
@@ -39,5 +39,16 @@
       "svelte",
       "urlpattern",
       "aliolithebest"
-   ]
+   ],
+   "description": "**SPA** rounting library for **Svelte** with URLPattern API.",
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/caenguidanos/alioli.git"
+   },
+   "author": "Cristian Enguídanos Nebot",
+   "license": "ISC",
+   "bugs": {
+      "url": "https://github.com/caenguidanos/alioli/issues"
+   },
+   "homepage": "https://github.com/caenguidanos/alioli#readme"
 }
