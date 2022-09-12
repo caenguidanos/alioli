@@ -129,4 +129,6 @@ export default async function IsAuthedGuard(): Promise<boolean> {
 </script>
 
 <h1>Page</h1>
+
+<a href="/contact">Go to contact</a>
 ```
