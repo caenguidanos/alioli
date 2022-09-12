@@ -1,14 +1,15 @@
 import type { SvelteComponent } from "svelte";
-
 import * as store from "./store";
 import type { PageProps } from "./types";
 import Router from "./templates/Router.svelte";
 import { findAnchorTag } from "./find-anchor-tag";
 import { removeUnusedKeys } from "./remove-unsused-keys";
 
+type RouteComponent = typeof SvelteComponent | (() => Promise<{ default: typeof SvelteComponent }>);
+
 export type RouteGuard = {
    script: () => Promise<any>;
-   loader?: typeof SvelteComponent | (() => Promise<{ default: typeof SvelteComponent }>);
+   loader?: RouteComponent;
 };
 
 export interface Route {
@@ -22,7 +23,7 @@ export interface Route {
       key: string;
       filter: (value: string) => boolean;
    }>;
-   component?: typeof SvelteComponent | (() => Promise<{ default: typeof SvelteComponent }>);
+   component?: RouteComponent;
 }
 
 interface Options {
@@ -38,7 +39,6 @@ export class AppWithRouter {
       guards: Route["guards"];
    }> = [];
 
-   private currentPatternPathname: string = "";
    private currentComponentInstance: SvelteComponent | undefined;
 
    constructor(private readonly options: Options) {
@@ -120,28 +120,20 @@ export class AppWithRouter {
 
    private async renderPage(url: URL): Promise<void> {
       let route = this.findRouteByPathStringPattern(this.processedRoutes, url);
-      if (!route) {
-         let Component = await import("./templates/__404.svelte");
-
-         this.currentComponentInstance = new Component.default({
-            target: this.options.root,
-            props: {},
-         });
-         return;
-      }
+      if (!route) return;
 
       if (route.ctx.redirectTo) {
          window.history.back();
          let url = new URL(window.location.href);
          url.pathname = route.ctx.redirectTo;
          window.location.href = url.toString();
+
          return;
       }
 
+      let loaderInstance: SvelteComponent;
       if (route.ctx.guards) {
          for (let guardObj of route.ctx.guards) {
-            let loaderInstance: SvelteComponent;
-
             if (guardObj.loader) {
                if (guardObj.loader.toString().includes("class")) {
                   loaderInstance = new (guardObj.loader as typeof SvelteComponent)({
@@ -163,8 +155,6 @@ export class AppWithRouter {
                canPass = await guard.default();
             }
 
-            if (loaderInstance) loaderInstance.$destroy();
-
             if (!canPass) {
                this.destroyPreviousInstance();
                return;
@@ -175,23 +165,22 @@ export class AppWithRouter {
       let params = removeUnusedKeys(route.info.pathname.groups);
       let pathname = route.info.pathname.input;
       let search = route.info.search.input ? removeUnusedKeys(route.info.search.groups) : {};
-
       let newComponents = await this.fetchComponents(route.ctx.components);
       let newPageProps: PageProps = { pathname, params, search, hash: url.hash };
-
-      if (this.currentPatternPathname === route.ctx.pattern.pathname) {
-         return store.props.set(newPageProps);
+      store.props.set(newPageProps);
+      if (this.currentComponentInstance) {
+         this.currentComponentInstance.$set({ children: newComponents });
+      } else {
+         this.destroyPreviousInstance();
+         this.currentComponentInstance = new Router({
+            target: this.options.root,
+            props: {
+               children: newComponents,
+            },
+         });
       }
 
-      this.destroyPreviousInstance();
-      store.props.set(newPageProps);
-      this.currentPatternPathname = route.ctx.pattern.pathname;
-      this.currentComponentInstance = new Router({
-         target: this.options.root,
-         props: {
-            children: newComponents,
-         },
-      });
+      if (loaderInstance) loaderInstance.$destroy();
    }
 
    private findRouteByPathStringPattern(

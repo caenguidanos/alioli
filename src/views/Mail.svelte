@@ -11,10 +11,7 @@
 
    <ul>
       <li>
-         <a href="/mail/recibidos/leidos/123?filter=true">123</a>
-         <a href="/mail/recibidos/leidos/234?filter=false">234</a>
-         <a href="/mail/recibidos/leidos/567?filter=false">567</a>
-         <a href="/mail/recibidos/actuales">Actuales</a>
+         <a href="/mail/retrieved/pending">Actuales</a>
       </li>
    </ul>
 </div>

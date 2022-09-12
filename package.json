@@ -1,7 +1,7 @@
 {
    "name": "alioli",
    "private": false,
-   "version": "0.0.0",
+   "version": "0.0.2",
    "type": "module",
    "files": [
       "dist"
@@ -40,7 +40,7 @@
       "urlpattern",
       "aliolithebest"
    ],
-   "description": "**SPA** rounting library for **Svelte** with URLPattern API.",
+   "description": "SPA rounting library for Svelte",
    "repository": {
       "type": "git",
       "url": "git+https://github.com/caenguidanos/alioli.git"

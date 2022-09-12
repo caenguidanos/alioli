@@ -2,7 +2,6 @@ import { AppWithRouter } from "$router";
 
 import { routes } from "./routes";
 
-import "./polyfill";
 import "./styles.scss";
 
 const app = new AppWithRouter({
