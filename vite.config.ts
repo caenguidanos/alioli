@@ -7,24 +7,19 @@ export default defineConfig({
    plugins: [svelte()],
    resolve: {
       alias: {
-         $router: path.resolve("./src/lib/routing"),
+         alioli: path.resolve("./src/lib/alioli"),
       },
    },
    build: {
       minify: true,
       lib: {
-         entry: path.resolve("./src/lib/routing/index.ts"),
+         entry: path.resolve("./src/lib/alioli/index.ts"),
          name: "alioli",
          fileName: "alioli",
          formats: ["es", "cjs"],
       },
       rollupOptions: {
          external: ["svelte"],
-         output: {
-            globals: {
-               svelte: "Svelte",
-            },
-         },
       },
    },
 });

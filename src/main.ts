@@ -1,4 +1,4 @@
-import { AppWithRouter } from "$router";
+import { AppWithRouter } from "alioli";
 
 import { routes } from "./routes";
 

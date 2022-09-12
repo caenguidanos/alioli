@@ -16,7 +16,7 @@
       "checkJs": true,
       "isolatedModules": true,
       "paths": {
-         "$router": ["./src/lib/routing"]
+         "alioli": ["src/lib/alioli"]
       }
    },
    "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte"],

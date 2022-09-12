@@ -1,5 +1,5 @@
 <script>
-   import { props } from "$router";
+   import { props } from "alioli";
 
    $: {
       console.log($props);

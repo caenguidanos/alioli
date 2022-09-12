@@ -1,0 +1,5 @@
+export function generateCleanedUrlFromHref(): URL {
+   let url = new URL(window.location.href);
+   if (url.pathname.endsWith("/")) url.pathname = url.pathname.slice(0, -1);
+   return url;
+}

@@ -1,4 +1,4 @@
-import type { Route } from "$router";
+import type { Route } from "alioli";
 
 import IndexRouteComponent from "./views/Index.svelte";
 
