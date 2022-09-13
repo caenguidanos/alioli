@@ -112,7 +112,7 @@ export default routes;
 
 ```ts
 // src/guards/is-authed.ts
-import { redirect, type Guard } from "alioli";
+import { navigate, type Guard } from "alioli";
 
 function sleep(ms: number): Promise<void> {
    return new Promise<void>((res) => setTimeout(() => res(), ms));
@@ -124,7 +124,7 @@ const isAuthedGuard: Guard = async () => {
    return {
       continue: false,
       onExit: async () => {
-         await redirect("/about");
+         await navigate("/about");
       },
    };
 };
