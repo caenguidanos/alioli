@@ -14,7 +14,7 @@ export type Guard = () => Promise<RouterGuardResult>;
 export type RouterGuard = () => Promise<any>;
 
 export interface RouterGuardResult {
-   status: boolean;
+   continue: boolean;
    onExit?: () => Promise<void>;
 }
 

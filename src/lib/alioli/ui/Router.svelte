@@ -1,8 +1,8 @@
 <script lang="ts">
    import type { SvelteComponent } from "svelte";
    import { writable } from "svelte/store";
-   import type { RouterGuardResult } from "../entity";
 
+   import type { RouterGuardResult } from "../entity";
    import { redirect } from "../util";
 
    export let children: typeof SvelteComponent[] = [];
@@ -22,9 +22,9 @@
    $: {
       (async () => {
          if (guard) {
-            canPass.set(guard.status);
+            canPass.set(guard.continue);
 
-            if (!guard.status) {
+            if (!guard.continue) {
                if (guard.onExit) {
                   await guard.onExit();
                }
