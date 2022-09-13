@@ -19,7 +19,7 @@ export default defineConfig({
          formats: ["es", "cjs"],
       },
       rollupOptions: {
-         external: ["svelte"],
+         external: ["svelte", "svelte/store"],
       },
    },
 });

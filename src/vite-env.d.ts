@@ -12,6 +12,8 @@ interface NavigationHistoryEntry {
    getState: () => any;
 }
 
+declare var URLPattern: any;
+
 declare var navigation: {
    addEventListener: (name: string, cb: (ev: any) => void) => void;
    currentEntry: NavigationHistoryEntry;
