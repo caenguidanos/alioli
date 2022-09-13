@@ -1,11 +1,3 @@
-<script>
-   import { props } from "alioli";
-
-   $: {
-      console.log($props);
-   }
-</script>
-
 <div>
    <h1>Mail2</h1>
 

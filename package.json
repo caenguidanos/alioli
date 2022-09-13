@@ -1,7 +1,7 @@
 {
    "name": "alioli",
    "private": false,
-   "version": "0.0.4",
+   "version": "0.0.5",
    "type": "module",
    "files": [
       "dist"
@@ -16,7 +16,7 @@
    },
    "scripts": {
       "dev": "vite",
-      "build": "vite build",
+      "build": "vite build -c vite.lib.config.ts",
       "preview": "vite preview",
       "check": "svelte-check --tsconfig ./tsconfig.json",
       "format": "prettier --write ."
@@ -37,10 +37,10 @@
    },
    "keywords": [
       "svelte",
-      "urlpattern",
-      "aliolithebest"
+      "urlpatternapi",
+      "navigationapi"
    ],
-   "description": "SPA rounting library for Svelte",
+   "description": "SPA futuristic rounting library for Svelte",
    "repository": {
       "type": "git",
       "url": "git+https://github.com/caenguidanos/alioli.git"

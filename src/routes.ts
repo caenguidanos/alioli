@@ -14,10 +14,6 @@ export const routes: Route[] = [
       guards: [
          {
             script: () => import("./guards/is-authed"),
-            loader: () => import("./components/Loader.svelte"),
-         },
-         {
-            script: () => import("./guards/is-person"),
          },
       ],
    },
@@ -36,12 +32,6 @@ export const routes: Route[] = [
    {
       pathname: "/mail",
       component: () => import("./views/__layout.svelte"),
-      guards: [
-         {
-            script: () => import("./guards/is-authed"),
-            loader: () => import("./components/Loader.svelte"),
-         },
-      ],
       children: [
          {
             pathname: "/retrieved",
@@ -53,7 +43,6 @@ export const routes: Route[] = [
                   children: [
                      {
                         pathname: "/:id",
-                        search: "?{id=:id(\\d+)}?{filter=:filter}?",
                         component: () => import("./views/Mail.svelte"),
                      },
                   ],

@@ -1,14 +1,19 @@
-export function pushState(url: URL): void {
-   window.history.pushState(null, undefined, url.pathname + url.search);
-}
-
-export function redirect(pathname: string): void {
+export function redirect(pathname: string) {
    try {
-      window.history.back();
       let url = new URL(window.location.href);
       url.pathname = pathname;
-      window.location.href = url.toString();
+      (window as any).navigation.navigate(url.toString(), { history: "replace" });
    } catch (error) {
       console.error(`Imposible to redirect: ${error}`);
+   }
+}
+
+export function navigate(pathname: string) {
+   try {
+      let url = new URL(window.location.href);
+      url.pathname = pathname;
+      (window as any).navigation.navigate(url.toString(), { history: "push" });
+   } catch (error) {
+      console.error(`Imposible to navigate: ${error}`);
    }
 }

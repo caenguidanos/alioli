@@ -14,6 +14,11 @@ export interface RouterGuard {
    loader?: RouterComponent;
 }
 
+export interface RouterGuardResult {
+   status: boolean;
+   effect: () => Promise<void>;
+}
+
 export interface RouteValidator {
    type: "param" | "searchParam";
    key: string;

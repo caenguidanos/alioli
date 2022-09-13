@@ -1,6 +1,6 @@
 # Alioli
 
-**SPA** rounting library for **Svelte** with URLPattern API.
+**SPA** futuristic rounting library for **Svelte** with _URLPattern API_ and _Navigation API_.
 
 > It's an EXPERIMENTAL library, don't use in **production**.
 
@@ -41,15 +41,6 @@ export const routes: Route[] = [
       pathname: "/contact",
       search: "?{id=:id(\\d+)}?{filter=:filter}?",
       component: () => import("./views/Contact.svelte"),
-      guards: [
-         {
-            script: () => import("./guards/is-authed"),
-            loader: () => import("./components/Loader.svelte"),
-         },
-         {
-            script: () => import("./guards/is-person"),
-         },
-      ],
    },
    {
       pathname: "/about",
@@ -69,7 +60,6 @@ export const routes: Route[] = [
       guards: [
          {
             script: () => import("./guards/is-authed"),
-            loader: () => import("./components/Loader.svelte"),
          },
       ],
       children: [
@@ -83,7 +73,6 @@ export const routes: Route[] = [
                   children: [
                      {
                         pathname: "/:id",
-                        search: "?{id=:id(\\d+)}?{filter=:filter}?",
                         component: () => import("./views/Mail.svelte"),
                      },
                   ],
@@ -108,27 +97,24 @@ export const routes: Route[] = [
 ```
 
 ```ts
+import { redirect } from "alioli";
+
 export default async function IsAuthedGuard(): Promise<boolean> {
-   return new Promise<boolean>((res) => {
-      setTimeout(() => {
-         // redirect or do things
-         res(false);
-      }, 1000);
-   });
+   return new Promise<boolean>((res) => setTimeout(() => res(false), 600)).finally(() => redirect("/"));
 }
 ```
 
 ```svelte
-<script>
-   import { props } from "alioli";
+<script lang="ts">
+   import { navigate } from "alioli";
 
-   $: {
-      // params, search, pathname and hash
-      console.log($props);
+   function handleButtonClick(): void {
+      navigate("/blog");
    }
 </script>
 
 <h1>Page</h1>
 
 <a href="/contact">Go to contact</a>
+<button on:click={handleButtonClick}>Go to Blog</button>
 ```

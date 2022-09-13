@@ -1,11 +1,3 @@
-<script>
-   import { props } from "alioli";
-
-   $: {
-      console.log($props);
-   }
-</script>
-
 <h1>Blog</h1>
 
 <a href="/">Go to index</a>

@@ -10,4 +10,16 @@ export default defineConfig({
          alioli: path.resolve("./src/lib/alioli"),
       },
    },
+   build: {
+      minify: true,
+      lib: {
+         entry: path.resolve("./src/lib/alioli/index.ts"),
+         name: "alioli",
+         fileName: "alioli",
+         formats: ["es", "cjs"],
+      },
+      rollupOptions: {
+         external: ["svelte"],
+      },
+   },
 });
