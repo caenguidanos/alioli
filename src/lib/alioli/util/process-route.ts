@@ -15,7 +15,8 @@ export function processRoutesFromConfig(routes: Route[]): RouterProcessedRoute[]
       layoutBase: string,
       components: RouterComponent[],
       remainingRoutes: Route[],
-      remainingGuards: RouterGuard[]
+      remainingGuards: RouterGuard[],
+      parentRedirect: string
    ) {
       for (let route of remainingRoutes) {
          let nextPathname = layoutBase + route.pathname;
@@ -25,7 +26,8 @@ export function processRoutesFromConfig(routes: Route[]): RouterProcessedRoute[]
                nextPathname,
                components.concat(route.component),
                route.children,
-               remainingGuards.concat(route.guards)
+               remainingGuards.concat(route.guards),
+               parentRedirect ? parentRedirect : route.redirectTo
             );
          } else {
             processedRoutes.push({
@@ -43,7 +45,7 @@ export function processRoutesFromConfig(routes: Route[]): RouterProcessedRoute[]
       }
    }
 
-   transform("", [], routes, []);
+   transform("", [], routes, [], undefined);
 
    return processedRoutes;
 }

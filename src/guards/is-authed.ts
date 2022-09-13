@@ -1,5 +1,18 @@
-import { redirect } from "alioli";
+import { redirect, type Guard } from "alioli";
 
-export default async function IsAuthedGuard(): Promise<boolean> {
-   return new Promise<boolean>((res) => setTimeout(() => res(false), 600)).finally(() => redirect("/"));
+function sleep(ms: number): Promise<void> {
+   return new Promise<void>((res) => setTimeout(() => res(), ms));
 }
+
+const isAuthedGuard: Guard = async () => {
+   await sleep(500);
+
+   return {
+      status: false,
+      onExit: async () => {
+         await redirect("/about");
+      },
+   };
+};
+
+export default isAuthedGuard;

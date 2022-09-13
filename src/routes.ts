@@ -11,11 +11,6 @@ export const routes: Route[] = [
       pathname: "/contact",
       search: "?{id=:id(\\d+)}?{filter=:filter}?",
       component: () => import("./views/Contact.svelte"),
-      guards: [
-         {
-            script: () => import("./guards/is-authed"),
-         },
-      ],
    },
    {
       pathname: "/about",
@@ -28,6 +23,7 @@ export const routes: Route[] = [
    {
       pathname: "/images/:file*",
       component: () => import("./views/Image.svelte"),
+      guards: [() => import("./guards/is-authed")],
    },
    {
       pathname: "/mail",

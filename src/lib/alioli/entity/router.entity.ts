@@ -9,14 +9,13 @@ export interface RouterPageProps<Params = Record<string, string>, Search = Recor
 
 export type RouterComponent = typeof SvelteComponent | (() => Promise<{ default: typeof SvelteComponent }>);
 
-export interface RouterGuard {
-   script: () => Promise<any>;
-   loader?: RouterComponent;
-}
+export type Guard = () => Promise<RouterGuardResult>;
+
+export type RouterGuard = () => Promise<any>;
 
 export interface RouterGuardResult {
    status: boolean;
-   effect: () => Promise<void>;
+   onExit?: () => Promise<void>;
 }
 
 export interface RouteValidator {

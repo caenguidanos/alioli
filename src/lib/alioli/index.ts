@@ -3,4 +3,4 @@ import "./polyfill";
 export * from "./router";
 export * from "./state/store";
 export * from "./entity";
-export { redirect, navigate } from "./util/history";
+export { redirect, navigate, reload } from "./util/history";

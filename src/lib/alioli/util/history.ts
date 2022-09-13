@@ -1,19 +1,23 @@
-export function redirect(pathname: string) {
+export async function redirect(pathname: string): Promise<void> {
    try {
-      let url = new URL(window.location.href);
-      url.pathname = pathname;
-      (window as any).navigation.navigate(url.toString(), { history: "replace" });
+      await navigation.navigate(pathname, { history: "replace" }).committed;
    } catch (error) {
       console.error(`Imposible to redirect: ${error}`);
    }
 }
 
-export function navigate(pathname: string) {
+export async function navigate(pathname: string): Promise<void> {
    try {
-      let url = new URL(window.location.href);
-      url.pathname = pathname;
-      (window as any).navigation.navigate(url.toString(), { history: "push" });
+      await navigation.navigate(pathname, { history: "push" }).finished;
    } catch (error) {
       console.error(`Imposible to navigate: ${error}`);
+   }
+}
+
+export async function reload(): Promise<void> {
+   try {
+      await navigation.reload({ history: "replace" }).finished;
+   } catch (error) {
+      console.error(`Imposible to reload: ${error}`);
    }
 }

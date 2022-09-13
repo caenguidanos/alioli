@@ -1,6 +1,6 @@
 # Alioli
 
-**SPA** futuristic rounting library for **Svelte** with _URLPattern API_ and _Navigation API_.
+**SPA** futuristic routing library for **Svelte** with _URLPatternAPI_ and _NavigationAPI_.
 
 > It's an EXPERIMENTAL library, don't use in **production**.
 
@@ -13,21 +13,7 @@ npm i alioli@latest
 Example:
 
 ```ts
-import { AppWithRouter } from "alioli";
-
-import { routes } from "./routes";
-
-import "./styles.scss";
-
-const app = new AppWithRouter({
-   root: document.getElementById("app"),
-   routes,
-});
-
-app.start();
-```
-
-```ts
+// src/main.ts
 import type { Route } from "alioli";
 
 import IndexRouteComponent from "./views/Index.svelte";
@@ -53,15 +39,11 @@ export const routes: Route[] = [
    {
       pathname: "/images/:file*",
       component: () => import("./views/Image.svelte"),
+      guards: [() => import("./guards/is-authed")],
    },
    {
       pathname: "/mail",
       component: () => import("./views/__layout.svelte"),
-      guards: [
-         {
-            script: () => import("./guards/is-authed"),
-         },
-      ],
       children: [
          {
             pathname: "/retrieved",
@@ -97,11 +79,25 @@ export const routes: Route[] = [
 ```
 
 ```ts
-import { redirect } from "alioli";
+// src/guards/is-authed.ts
+import { redirect, type Guard } from "alioli";
 
-export default async function IsAuthedGuard(): Promise<boolean> {
-   return new Promise<boolean>((res) => setTimeout(() => res(false), 600)).finally(() => redirect("/"));
+function sleep(ms: number): Promise<void> {
+   return new Promise<void>((res) => setTimeout(() => res(), ms));
 }
+
+const isAuthedGuard: Guard = async () => {
+   await sleep(500);
+
+   return {
+      status: false,
+      onExit: async () => {
+         await redirect("/about");
+      },
+   };
+};
+
+export default isAuthedGuard;
 ```
 
 ```svelte
