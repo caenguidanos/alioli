@@ -1,4 +1,8 @@
-<h1>Images</h1>
+<script>
+   import { navigationGuardTransition } from "alioli";
+</script>
+
+<h1>Images {$navigationGuardTransition}</h1>
 
 <a href="/">Go to index</a>
 <a href="/contact">Go to contact</a>

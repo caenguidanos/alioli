@@ -3,18 +3,17 @@
    import { writable } from "svelte/store";
 
    import type { RouterGuardResult } from "../entity";
-   import { redirect } from "../util";
 
    export let children: typeof SvelteComponent[] = [];
-   export let redirectTo: string | undefined;
-   export let guard: RouterGuardResult | null;
+   export let redirectTo: string | undefined = undefined;
+   export let guard: RouterGuardResult | undefined | null = undefined;
 
    let canPass = writable<boolean>(false);
 
    $: {
       (async () => {
          if (redirectTo) {
-            await redirect(redirectTo);
+            await navigation.navigate(redirectTo, { history: "replace" }).committed;
          }
       })();
    }

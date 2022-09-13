@@ -8,7 +8,7 @@ const isAuthedGuard: Guard = async () => {
    await sleep(500);
 
    return {
-      continue: false,
+      continue: true,
       onExit: async () => {
          await redirect("/about");
       },

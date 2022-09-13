@@ -2,7 +2,7 @@ import type { Route } from "alioli";
 
 import IndexRouteComponent from "./views/Index.svelte";
 
-export const routes: Route[] = [
+const routes: Route[] = [
    {
       pathname: "/",
       component: IndexRouteComponent,
@@ -60,3 +60,5 @@ export const routes: Route[] = [
       redirectTo: "/",
    },
 ];
+
+export default routes;

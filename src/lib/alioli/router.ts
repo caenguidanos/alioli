@@ -1,3 +1,6 @@
+import { get } from "svelte/store";
+import type { SvelteComponent } from "svelte";
+
 import Router from "./ui/Router.svelte";
 
 import {
@@ -7,23 +10,25 @@ import {
    removePathnameTrailingSlash,
    resolveComponents,
 } from "./util";
-import * as store from "./state/store";
 
-import type { SvelteComponent } from "svelte";
-import type {
-   AppWithRouterOptions,
-   RouterGuard,
-   RouterGuardResult,
-   RouterPageProps,
-   RouterProcessedRoute,
+import { _navigationGuardTransition, _pageProps } from "./state/store";
+
+import {
+   NavigationGuardTransition,
+   type AlioliOptions,
+   type RouterGuard,
+   type RouterGuardResult,
+   type RouterPageProps,
+   type RouterProcessedRoute,
 } from "./entity";
 
-export class AppWithRouter {
-   private firstLoadNavigationEntryKey = "";
+export class Alioli {
+   private _app: typeof SvelteComponent | undefined;
+   private lastDestinationUrl = "";
    private processedRoutes: RouterProcessedRoute[] = [];
    private currentComponentInstance: SvelteComponent | undefined;
 
-   constructor(private readonly options: AppWithRouterOptions) {}
+   constructor(private readonly options: AlioliOptions) {}
 
    public async start(): Promise<void> {
       this.processedRoutes = processRoutesFromConfig(this.options.routes);
@@ -31,6 +36,18 @@ export class AppWithRouter {
 
       let url = new URL(window.location.href);
       url.pathname = removePathnameTrailingSlash(url);
+
+      let app = await this.options.app();
+      this._app = app.default;
+      this.currentComponentInstance = new Router({
+         target: this.options.root,
+         props: {
+            children: [this._app],
+            redirectTo: undefined,
+            guard: undefined,
+         },
+      });
+
       await this.render(url);
 
       this.listenNavigationEvents();
@@ -49,16 +66,17 @@ export class AppWithRouter {
       navigation.addEventListener("navigate", (event: any) => {
          if (shouldNotIntercept(event)) return;
 
-         const url = new URL(event.destination.url);
+         if (event.destination.url === this.lastDestinationUrl) {
+            event.intercept({});
+         } else {
+            const url = new URL(event.destination.url);
+            this.lastDestinationUrl = event.destination.url;
 
-         event.intercept({
-            handler: async () => this.render(url),
-         });
+            event.intercept({
+               handler: async () => this.render(url),
+            });
+         }
       });
-
-      // TODO
-      // navigation.addEventListener("navigatesuccess", (event) => {});
-      // navigation.addEventListener("navigateerror", (event) => {});
    }
 
    private cleanRoutesReferences(): void {
@@ -66,10 +84,7 @@ export class AppWithRouter {
    }
 
    private async render(url: URL): Promise<void> {
-      // TODO
-      if (!this.firstLoadNavigationEntryKey) {
-         this.firstLoadNavigationEntryKey = navigation.currentEntry.key;
-      }
+      _navigationGuardTransition.set(NavigationGuardTransition.IDLE);
 
       let processedRoute = getProcessedRouteByUrlPattern(this.processedRoutes, url);
       if (!processedRoute) {
@@ -80,33 +95,27 @@ export class AppWithRouter {
 
          let processedRouteComponents = await resolveComponents(processedRoute.ctx.components);
 
-         store.props.set(processedRoutePageProps as RouterPageProps);
+         _pageProps.set(processedRoutePageProps as RouterPageProps);
 
          let processedRouteAffectedRouteGuard = await this.processRouteGuards(processedRoute.ctx.guards);
 
-         if (this.currentComponentInstance) {
-            this.currentComponentInstance.$set({
-               children: processedRouteComponents,
-               redirectTo: processedRoute.ctx.redirectTo,
-               guard: processedRouteAffectedRouteGuard,
-            });
-         } else {
-            this.destroyPreviousCurrentComponentInstance();
-
-            this.currentComponentInstance = new Router({
-               target: this.options.root,
-               props: {
-                  children: processedRouteComponents,
-                  redirectTo: processedRoute.ctx.redirectTo,
-                  guard: processedRouteAffectedRouteGuard,
-               },
-            });
+         let navigationGuardTransitionState = get(_navigationGuardTransition);
+         if (navigationGuardTransitionState === NavigationGuardTransition.START) {
+            _navigationGuardTransition.set(NavigationGuardTransition.END);
          }
+
+         this.currentComponentInstance.$set({
+            children: [this._app, ...processedRouteComponents],
+            redirectTo: processedRoute.ctx.redirectTo,
+            guard: processedRouteAffectedRouteGuard,
+         });
       }
    }
 
    private async processRouteGuards(guards: RouterGuard[]): Promise<RouterGuardResult | null> {
       if (guards.length) {
+         _navigationGuardTransition.set(NavigationGuardTransition.START);
+
          for (let guard of guards) {
             let resultOrLazyImport = await guard();
 
@@ -124,9 +133,5 @@ export class AppWithRouter {
       }
 
       return null;
-   }
-
-   private destroyPreviousCurrentComponentInstance(): void {
-      if (this.currentComponentInstance) this.currentComponentInstance.$destroy();
    }
 }

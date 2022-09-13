@@ -1,6 +1,6 @@
 import "./polyfill";
 
-export * from "./router";
-export * from "./state/store";
-export * from "./entity";
-export { redirect, navigate, reload } from "./util/history";
+export { Alioli } from "./router";
+export { navigationGuardTransition, pageProps } from "./state/store";
+export { type Guard, type AlioliOptions, type Route, NavigationGuardTransition } from "./entity";
+export { navigate } from "./util/history";

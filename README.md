@@ -14,11 +14,41 @@ Example:
 
 ```ts
 // src/main.ts
+import { Alioli } from "alioli";
+
+import routes from "./routes";
+
+import "./styles.scss";
+
+const spa = new Alioli({
+   root: document.getElementById("app"),
+   routes,
+   app: () => import("./_app.svelte"),
+});
+
+spa.start();
+```
+
+```svelte
+// src/_app.ts
+<script>
+   import { navigationGuardTransition, NavigationGuardTransition } from "alioli";
+</script>
+
+{#if $navigationGuardTransition === NavigationGuardTransition.START}
+   <p>Loading...</p>
+{/if}
+
+<slot />
+```
+
+```ts
+// src/routes.ts
 import type { Route } from "alioli";
 
 import IndexRouteComponent from "./views/Index.svelte";
 
-export const routes: Route[] = [
+const routes: Route[] = [
    {
       pathname: "/",
       component: IndexRouteComponent,
@@ -76,6 +106,8 @@ export const routes: Route[] = [
       redirectTo: "/",
    },
 ];
+
+export default routes;
 ```
 
 ```ts
